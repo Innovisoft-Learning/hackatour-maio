@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Dados com Foto</title>
+</head>
+<body>
+    <h1>Cadastro de Dados com Foto</h1>
+    <form id="formulario">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" required><br><br>
+        <label for="cpf">CPF:</label>
+        <input type="text" id="cpf" name="cpf" required><br><br>
+        <label for="foto">Foto:</label>
+        <input type="file" id="foto" name="foto" accept="image/*" required><br><br>
+        <label for="ativo">Ativo:</label>
+        <input type="checkbox" id="ativo" name="ativo" value="sim"> Sim
+        <input type="checkbox" id="inativo" name="ativo" value="nao"> Não
+        <br><br>
+        <button type="submit">Cadastrar</button>
+    </form>
+
+    <h2>Dados Cadastrados</h2>
+    <ul id="lista-dados"></ul>
+
+    <script>    
+        const formulario = document.getElementById('formulario');
+        const listaDados = document.getElementById('lista-dados');
+
+        formulario.addEventListener('submit', function(event) {
+            event.preventDefault(); // Impede o envio padrão do formulário
+
+            const nome = document.getElementById('nome').value;
+            const cpf = document.getElementById('cpf').value;
+            const foto = document.getElementById('foto').files[0]; // Obtém o arquivo de imagem
+            const ativo = document.querySelector('input[name="ativo"]:checked').value; // Obtém o valor do checkbox ativo/inativo
+
+            // Lê o arquivo de imagem como uma string base64
+            const leitor = new FileReader();
+            leitor.onload = function() {
+                const fotoBase64 = leitor.result;
+
+                // Cria um objeto com os dados do cadastro
+                const novoCadastro = {
+                    nome: nome,
+                    cpf: cpf,
+                    foto: fotoBase64, // Salva a imagem como uma string base64
+                    ativo: ativo // Salva o valor do checkbox ativo/inativo
+                };
+
+                // Recupera os dados já cadastrados, se houver
+                let dadosCadastrados = localStorage.getItem('dados');
+                dadosCadastrados = dadosCadastrados ? JSON.parse(dadosCadastrados) : [];
+
+                // Adiciona o novo cadastro à lista de dados
+                dadosCadastrados.push(novoCadastro);
+
+                // Salva a lista atualizada de dados no armazenamento local
+                localStorage.setItem('dados', JSON.stringify(dadosCadastrados));
+
+                // Limpa o formulário
+                formulario.reset();
+
+                // Atualiza a exibição dos dados cadastrados na página
+                listarDadosCadastrados();
+            };
+            leitor.readAsDataURL(foto); // Lê o arquivo de imagem como uma URL de dados (data URL)
+        });
+
+        function deletarCadastro(index) {
+            let dadosCadastrados = JSON.parse(localStorage.getItem('dados'));
+            dadosCadastrados.splice(index, 1); // Remove o cadastro do array
+            localStorage.setItem('dados', JSON.stringify(dadosCadastrados)); // Atualiza o armazenamento local
+            listarDadosCadastrados(); // Atualiza a exibição
+        }
+
+        function listarDadosCadastrados() {
+            // Limpa a lista de dados
+            listaDados.innerHTML = '';
+
+            // Recupera os dados cadastrados do armazenamento local
+            const dadosCadastrados = localStorage.getItem('dados');
+            if (dadosCadastrados) {
+                const dados = JSON.parse(dadosCadastrados);
+
+                // Para cada cadastro, cria um item na lista
+                dados.forEach((cadastro, index) => {
+                    const itemLista = document.createElement('li');
+                    itemLista.innerHTML = `
+                        <p>Nome: ${cadastro.nome}, CPF: ${cadastro.cpf}, Ativo: ${cadastro.ativo}</p>
+                        <img src="${cadastro.foto}" alt="Foto de ${cadastro.nome}" width="100">
+                        <button onclick="deletarCadastro(${index})">Excluir</button>
+                    `;
+                    listaDados.appendChild(itemLista);
+                });
+            }
+        }
+
+        // Ao carregar a página, exibe os dados cadastrados
+        window.onload = listarDadosCadastrados;
+    </script>
+</body>
+</html>
