@@ -3,102 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Dados com Foto</title>
+    <title>Cadastro de Local para Camping</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            color: aqua;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="file"],
+        input[type="checkbox"] {
+            margin-bottom: 10px;
+        }
+        button[type="submit"] {
+            background-color: aqua;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        button[type="submit"]:hover {
+            background-color: darkcyan;
+        }
+
+        .checkbox {
+            margin: 1%;
+            display: flex;
+            flex-direction: row;
+        }
+    </style>
 </head>
 <body>
-    <h1>Cadastro de Dados com Foto</h1>
+    <h1>Cadastro de Local para Camping</h1>
     <form id="formulario">
-        <label for="nome">Nome:</label>
+        <label for="nome">Nome do Local:</label>
         <input type="text" id="nome" name="nome" required><br><br>
-        <label for="cpf">CPF:</label>
-        <input type="text" id="cpf" name="cpf" required><br><br>
-        <label for="foto">Foto:</label>
-        <input type="file" id="foto" name="foto" accept="image/*" required><br><br>
-        <label for="ativo">Ativo:</label>
-        <input type="checkbox" id="ativo" name="ativo" value="sim"> Sim
-        <input type="checkbox" id="inativo" name="ativo" value="nao"> Não
-        <br><br>
+        <label for="coordenadas">Coordenadas:</label>
+        <input type="text" id="coordenadas" name="coordenadas" required placeholder="Ex: -20.0000, -40.0000"><br><br>
+        <div class="checkbox">
+            <input type="checkbox" id="banheiro" name="banheiro">
+            <label for="banheiro">Banheiro Próximo</label>
+        </div>
+        <div class="checkbox">
+            <input type="checkbox" id="wifi" name="wifi">
+            <label for="wifi">Wi-Fi Próximo</label>
+        </div>
+        <!-- Adicionei as outras checkboxes -->
+        <div class="checkbox">
+            <input type="checkbox" id="postoGasolina" name="postoGasolina">
+            <label for="postoGasolina">Posto de Gasolina Próximo</label>
+        </div>
+        <div class="checkbox">
+            <input type="checkbox" id="lojaConveniencia" name="lojaConveniencia">
+            <label for="lojaConveniencia">Loja de Conveniência Próxima</label>
+        </div>
+        <div class="checkbox">
+            <input type="checkbox" id="centroVisitantes" name="centroVisitantes">
+            <label for="centroVisitantes">Centro de Visitantes Próximo</label>
+        </div>
+        <div class="checkbox">
+            <input type="checkbox" id="hospital" name="hospital">
+            <label for="hospital">Hospital Próximo</label>
+        </div>
+        <div class="checkbox">
+            <input type="checkbox" id="trilhasCaminhadas" name="trilhasCaminhadas">
+            <label for="trilhasCaminhadas">Trilhas para Caminhadas Próximas</label>
+        </div>
+        <div class="checkbox">
+            <input type="checkbox" id="areaPesca" name="areaPesca">
+            <label for="areaPesca">Área de Pesca Próxima</label>
+        </div>
+        <div class="checkbox">
+            <input type="checkbox" id="areaNadar" name="areaNadar">
+            <label for="areaNadar">Área para Nadar Próxima</label>
+        </div>
+        <div class="checkbox">
+            <input type="checkbox" id="areaPiquenique" name="areaPiquenique">
+            <label for="areaPiquenique">Área para Piquenique Próxima</label>
+        </div>
+        <!-- Fim das checkboxes -->
+        <div class="checkbox">
+            <label for="foto">Fotos do Local:</label>
+            <input type="file" id="foto" name="foto" accept="image/*" required multiple>
+        </div>
         <button type="submit">Cadastrar</button>
     </form>
 
-    <h2>Dados Cadastrados</h2>
-    <ul id="lista-dados"></ul>
-
     <script>    
         const formulario = document.getElementById('formulario');
-        const listaDados = document.getElementById('lista-dados');
 
         formulario.addEventListener('submit', function(event) {
             event.preventDefault(); // Impede o envio padrão do formulário
 
             const nome = document.getElementById('nome').value;
-            const cpf = document.getElementById('cpf').value;
-            const foto = document.getElementById('foto').files[0]; // Obtém o arquivo de imagem
-            const ativo = document.querySelector('input[name="ativo"]:checked').value; // Obtém o valor do checkbox ativo/inativo
+            const coordenadas = document.getElementById('coordenadas').value;
+            const banheiro = document.getElementById('banheiro').checked;
+            const wifi = document.getElementById('wifi').checked;
+            // Adicionei as variáveis para os outros itens do formulário
+            const postoGasolina = document.getElementById('postoGasolina').checked;
+            const lojaConveniencia = document.getElementById('lojaConveniencia').checked;
+            const centroVisitantes = document.getElementById('centroVisitantes').checked;
+            const hospital = document.getElementById('hospital').checked;
+            const trilhasCaminhadas = document.getElementById('trilhasCaminhadas').checked;
+            const areaPesca = document.getElementById('areaPesca').checked;
+            const areaNadar = document.getElementById('areaNadar').checked;
+            const areaPiquenique = document.getElementById('areaPiquenique').checked;
+            const fotos = document.getElementById('foto').files;
 
-            // Lê o arquivo de imagem como uma string base64
-            const leitor = new FileReader();
-            leitor.onload = function() {
-                const fotoBase64 = leitor.result;
-
-                // Cria um objeto com os dados do cadastro
-                const novoCadastro = {
-                    nome: nome,
-                    cpf: cpf,
-                    foto: fotoBase64, // Salva a imagem como uma string base64
-                    ativo: ativo // Salva o valor do checkbox ativo/inativo
-                };
-
-                // Recupera os dados já cadastrados, se houver
-                let dadosCadastrados = localStorage.getItem('dados');
-                dadosCadastrados = dadosCadastrados ? JSON.parse(dadosCadastrados) : [];
-
-                // Adiciona o novo cadastro à lista de dados
-                dadosCadastrados.push(novoCadastro);
-
-                // Salva a lista atualizada de dados no armazenamento local
-                localStorage.setItem('dados', JSON.stringify(dadosCadastrados));
-
-                // Limpa o formulário
-                formulario.reset();
-
-                // Atualiza a exibição dos dados cadastrados na página
-                listarDadosCadastrados();
+            // Cria um objeto com os dados do local
+            const novoLocal = {
+                nome: nome,
+                coordenadas: coordenadas,
+                banheiro: banheiro,
+                wifi: wifi,
+                // Adicionei as outras características necessárias
+                postoGasolina: postoGasolina,
+                lojaConveniencia: lojaConveniencia,
+                centroVisitantes: centroVisitantes,
+                hospital: hospital,
+                trilhasCaminhadas: trilhasCaminhadas,
+                areaPesca: areaPesca,
+                areaNadar: areaNadar,
+                areaPiquenique: areaPiquenique,
+                fotos: []
             };
-            leitor.readAsDataURL(foto); // Lê o arquivo de imagem como uma URL de dados (data URL)
+
+            // Lê as fotos como URLs de dados (data URLs) e adiciona ao objeto
+            const leitores = [];
+            for (let i = 0; i < fotos.length; i++) {
+                const leitor = new FileReader();
+                leitores.push(leitor);
+                leitor.onload = function() {
+                    novoLocal.fotos.push(leitor.result);
+                    if (novoLocal.fotos.length === fotos.length) {
+                        // Após ler todas as fotos, salva o local
+                        salvarLocal(novoLocal);
+                    }
+                };
+                leitor.readAsDataURL(fotos[i]);
+            }
         });
 
-        function deletarCadastro(index) {
-            let dadosCadastrados = JSON.parse(localStorage.getItem('dados'));
-            dadosCadastrados.splice(index, 1); // Remove o cadastro do array
-            localStorage.setItem('dados', JSON.stringify(dadosCadastrados)); // Atualiza o armazenamento local
-            listarDadosCadastrados(); // Atualiza a exibição
+        function salvarLocal(local) {
+            // Recupera os locais já cadastrados, se houver
+            let locaisCadastrados = localStorage.getItem('locais');
+            locaisCadastrados = locaisCadastrados ? JSON.parse(locaisCadastrados) : [];
+
+            // Adiciona o novo local à lista de locais
+            locaisCadastrados.push(local);
+
+            // Salva a lista atualizada de locais no armazenamento local
+            localStorage.setItem('locais', JSON.stringify(locaisCadastrados));
+
+            // Limpa o formulário
+            formulario.reset();
+
+            // Redireciona para a página de listagem de locais
+            window.location.href = 'cadastrados.html';
         }
-
-        function listarDadosCadastrados() {
-            // Limpa a lista de dados
-            listaDados.innerHTML = '';
-
-            // Recupera os dados cadastrados do armazenamento local
-            const dadosCadastrados = localStorage.getItem('dados');
-            if (dadosCadastrados) {
-                const dados = JSON.parse(dadosCadastrados);
-
-                // Para cada cadastro, cria um item na lista
-                dados.forEach((cadastro, index) => {
-                    const itemLista = document.createElement('li');
-                    itemLista.innerHTML = `
-                        <p>Nome: ${cadastro.nome}, CPF: ${cadastro.cpf}, Ativo: ${cadastro.ativo}</p>
-                        <img src="${cadastro.foto}" alt="Foto de ${cadastro.nome}" width="100">
-                        <button onclick="deletarCadastro(${index})">Excluir</button>
-                    `;
-                    listaDados.appendChild(itemLista);
-                });
-            }
-        }
-
-        // Ao carregar a página, exibe os dados cadastrados
-        window.onload = listarDadosCadastrados;
     </script>
 </body>
 </html>

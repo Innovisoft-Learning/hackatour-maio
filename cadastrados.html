@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listagem de Locais de Camping</title>
+</head>
+<body>
+    <h1>Listagem de Locais de Camping</h1>
+    <ul id="lista-locais"></ul>
+
+
+    <script>
+        const listaLocais = document.getElementById('lista-locais');
+
+        // Recupera os locais cadastrados do armazenamento local
+        const locaisCadastrados = localStorage.getItem('locais');
+        if (locaisCadastrados) {
+            const locais = JSON.parse(locaisCadastrados);
+
+            // Função para excluir um local da lista
+            function excluirLocal(index) {
+                locais.splice(index, 1); // Remove o local do array
+                localStorage.setItem('locais', JSON.stringify(locais)); // Atualiza o armazenamento local
+                window.location.reload(); // Recarrega a página para refletir a exclusão
+            }
+
+            // Para cada local, cria um item na lista
+            locais.forEach((local, index) => {
+                const itemLista = document.createElement('li');
+                itemLista.innerHTML = `
+                    <p><strong>Nome:</strong> ${local.nome}</p>
+                    <p><strong>Coordenadas:</strong> ${local.coordenadas}</p>
+                    <p><strong>Banheiro Próximo:</strong> ${local.banheiro ? 'Sim' : 'Não'}</p>
+                    <p><strong>Wi-Fi Próximo:</strong> ${local.wifi ? 'Sim' : 'Não'}</p>
+                    <p><strong>Posto de Gasolina Próximo:</strong> ${local.postoGasolina ? 'Sim' : 'Não'}</p>
+                    <p><strong>Loja de Conveniência Próxima:</strong> ${local.lojaConveniencia ? 'Sim' : 'Não'}</p>
+                    <p><strong>Centro de Visitantes Próximo:</strong> ${local.centroVisitantes ? 'Sim' : 'Não'}</p>
+                    <p><strong>Hospital Próximo:</strong> ${local.hospital ? 'Sim' : 'Não'}</p>
+                    <p><strong>Trilhas para Caminhadas Próximas:</strong> ${local.trilhasCaminhadas ? 'Sim' : 'Não'}</p>
+                    <p><strong>Área de Pesca Próxima:</strong> ${local.areaPesca ? 'Sim' : 'Não'}</p>
+                    <p><strong>Área para Nadar Próxima:</strong> ${local.areaNadar ? 'Sim' : 'Não'}</p>
+                    <p><strong>Área para Piquenique Próxima:</strong> ${local.areaPiquenique ? 'Sim' : 'Não'}</p>
+                    <p><strong>Fotos:</strong></p>
+                    <ul>
+                        ${local.fotos.map(foto => `<li><img src="${foto}" alt="Foto do local"></li>`).join('')}
+                    </ul>
+                    <button onclick="excluirLocal(${index})">Excluir</button>
+                    <hr>
+                `;
+                listaLocais.appendChild(itemLista);
+            });
+        } else {
+            listaLocais.innerHTML = '<p>Nenhum local cadastrado.</p>';
+        }
+    </script>
+</body>
+</html>
