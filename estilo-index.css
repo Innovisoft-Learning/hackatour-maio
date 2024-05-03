@@ -102,7 +102,7 @@ section {
     width: 18vw;
     height: 10vh;
     background-color: aqua;
-    margin-right: 5%;
+    margin-right: 5vw;
     justify-content: center;
     align-items: center;
 }
@@ -112,7 +112,7 @@ a {
     color: black;
 }
 
-a > p {
+a > div > p {
     font-size: 1.1em;
     font-weight: bold;
 }

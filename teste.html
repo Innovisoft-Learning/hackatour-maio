@@ -43,9 +43,9 @@
     <h1>Cadastro de Local para Camping</h1>
     <form id="formulario">
         <label for="nome">Nome do Local:</label>
-        <input type="text" id="nome" name="nome" required><br><br>
+        <input autocomplete="off" type="text" id="nome" name="nome" required><br><br>
         <label for="coordenadas">Coordenadas:</label>
-        <input type="text" id="coordenadas" name="coordenadas" required placeholder="Ex: -20.0000, -40.0000"><br><br>
+        <input autocomplete="off" type="text" id="coordenadas" name="coordenadas" required placeholder="Ex: -20.0000, -40.0000"><br><br>
         <div class="checkbox">
             <input type="checkbox" id="banheiro" name="banheiro">
             <label for="banheiro">Banheiro Próximo</label>
@@ -167,7 +167,7 @@
             formulario.reset();
 
             // Redireciona para a página de listagem de locais
-            window.location.href = 'cadastrados.html';
+            window.location.href = 'index.html';
         }
     </script>
 </body>
